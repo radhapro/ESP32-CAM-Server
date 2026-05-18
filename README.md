@@ -1,61 +1,61 @@
-# ESP32-CAM Image Server
+ # ESP32-CAM Image Server
 
-## Yeh Project Kya Karta Hai
-ESP32-CAM ko WiFi se connect karke ek HTTP server chalata hai.
-Browser mein IP address daalo aur seedha camera ki photo aa jaati hai.
+## What This Project Does
+This project connects the ESP32-CAM to WiFi and runs an HTTP server.
+Open the IP address in any browser and get a live camera image instantly.
 
-## Humne Kya Kiya
-- ESP32-CAM ko WiFi se connect kiya
-- HTTP server banaya port 80 pe
-- `/get_image/` endpoint banaya jo fresh JPEG photo deta hai
-- RHYX M21-45 sensor ka issue fix kiya (RGB565 → JPEG convert)
-- Browser mein Capture, Back aur Download button banaye
-
-## Hardware
+## Hardware Used
 - ESP32-CAM module (RHYX M21-45 sensor)
-- ESP32-CAM-MB shield (USB se flash karne ke liye)
+- ESP32-CAM-MB shield (for USB flashing)
 
-## Problems Jo Aayi Aur Fix
+## What We Did
+- Connected ESP32-CAM to WiFi
+- Created an HTTP server on port 80
+- Built a `/get_image/` endpoint that returns a fresh JPEG photo
+- Fixed RHYX M21-45 sensor issue (used RGB565 format then converted to JPEG)
+- Added Capture, Back and Download buttons in the browser UI
+
+## Problems We Faced and How We Fixed Them
 | Problem | Fix |
 |---|---|
-| JPEG format not supported | RGB565 mode use kiya, phir `frame2jpg()` se convert kiya |
-| COM5 port error | Tools → Port → COM4 select kiya |
-| Camera init fail | RGB565 pixel format set kiya |
+| JPEG format not supported on sensor | Used RGB565 mode and converted using `frame2jpg()` |
+| Wrong COM port error (COM5) | Selected correct port COM4 in Arduino IDE |
+| Camera init failed | Changed pixel format to RGB565 |
 
-## API
-| Endpoint | Kya Karta Hai |
+## API Endpoints
+| Endpoint | Description |
 |---|---|
-| `GET /` | Main page — Capture/Back/Download buttons |
-| `GET /get_image/` | Fresh JPEG photo return karta hai |
+| `GET /` | Main page with Capture, Back, Download buttons |
+| `GET /get_image/` | Returns a fresh JPEG image |
 
-## Kaise Flash Kare
-1. Arduino IDE mein Board → `AI Thinker ESP32-CAM` select karo
-2. Port → `COM4` select karo
-3. `WIFI_SSID` aur `WIFI_PASSWORD` apna bharo
-4. IO0 button dabao + RST press karo → Upload karo
-5. RST ek baar dabao → Serial Monitor mein IP dekho
+## How to Flash
+1. Open Arduino IDE
+2. Select Board → `AI Thinker ESP32-CAM`
+3. Select Port → `COM4`
+4. Enter your WiFi name and password in the code
+5. Hold IO0 button → Press RST → Click Upload
+6. After upload press RST once → Check Serial Monitor for IP
 
-## Kaise Use Kare
-1. Serial Monitor kholo (115200 baud)
-2. IP address dekho jaise `192.168.29.243`
-3. Browser mein daalo: `http://192.168.29.243/`
-4. **Capture** button dabao → photo aa jaayegi
-5. **Download** button se photo save karo
+## How to Use
+1. Open Serial Monitor at 115200 baud
+2. Note the IP address shown (example: `192.168.29.243`)
+3. Open browser and go to `http://192.168.29.243/`
+4. Click **Capture** to take a photo
+5. Click **Download** to save the photo
 
 ## WiFi Setup
 ```cpp
-const char* WIFI_SSID     = "Tumhara_WiFi_Naam";
-const char* WIFI_PASSWORD = "Tumhara_Password";
+const char* WIFI_SSID     = "Your_WiFi_Name";
+const char* WIFI_PASSWORD = "Your_Password";
 ```
 
 ## Libraries Used
-- `esp_camera.h` — camera control
-- `img_converters.h` — RGB565 to JPEG convert
+- `esp_camera.h` — Camera control
+- `img_converters.h` — RGB565 to JPEG conversion
 - `WiFi.h` — WiFi connection
 - `WebServer.h` — HTTP server
 
-## Results / Output
-
+## Result Images
 ![photo](images/photo.jpg)
 ![photo1](images/photo1.jpg)
 ![photo2](images/photo2.jpg)
