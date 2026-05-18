@@ -53,3 +53,12 @@ const char* WIFI_PASSWORD = "Tumhara_Password";
 - `img_converters.h` — RGB565 to JPEG convert
 - `WiFi.h` — WiFi connection
 - `WebServer.h` — HTTP server
+
+## Results / Output
+
+![photo](images/photo.jpg)
+![photo1](images/photo1.jpg)
+![photo2](images/photo2.jpg)
+![photo3](images/photo3.jpg)
+![photo4](images/photo4.jpg)
+![photo5](images/photo5.jpg)
