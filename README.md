@@ -1,55 +1,36 @@
-# ESP32-CAM Image Server
+ # ESP32-CAM Server
 
-## Yeh Project Kya Karta Hai
-ESP32-CAM ko WiFi se connect karke ek HTTP server chalata hai.
-Browser mein IP address daalo aur seedha camera ki photo aa jaati hai.
+## Kya Karta Hai Ye Code?
+ESP32-CAM se photo capture karta hai aur 3 kaam karta hai:
+- **JPEG image** direct browser mein dikhata hai
+- **JSON format** mein Base64 image data deta hai
+- **Web UI** se capture, JSON dekho, aur image convert karo
 
-## Humne Kya Kiya
-- ESP32-CAM ko WiFi se connect kiya
-- HTTP server banaya port 80 pe
-- `/get_image/` endpoint banaya jo fresh JPEG photo deta hai
-- RHYX M21-45 sensor ka issue fix kiya (RGB565 → JPEG convert)
-- Browser mein Capture, Back aur Download button banaye
+## Features
+- WiFiManager - pehli baar hotspot se WiFi connect karo
+- NTP Time Sync - IST time stamp har image pe
+- 3 Buttons - Capture / Show JSON / Convert to Image
+- Dark theme web interface
 
 ## Hardware
-- ESP32-CAM module (RHYX M21-45 sensor)
-- ESP32-CAM-MB shield (USB se flash karne ke liye)
+- ESP32-CAM (AI Thinker)
 
-## Problems Jo Aayi Aur Fix
-| Problem | Fix |
-|---|---|
-| JPEG format not supported | RGB565 mode use kiya, phir `frame2jpg()` se convert kiya |
-| COM5 port error | Tools → Port → COM4 select kiya |
-| Camera init fail | RGB565 pixel format set kiya |
+## API Endpoints
+| URL | Kaam |
+|-----|------|
+| `/` | Web UI |
+| `/get_image/` | Direct JPEG |
+| `/get_image_json/` | Base64 JSON |
 
-## API
-| Endpoint | Kya Karta Hai |
-|---|---|
-| `GET /` | Main page — Capture/Back/Download buttons |
-| `GET /get_image/` | Fresh JPEG photo return karta hai |
+## Setup
+1. Code upload karo ESP32-CAM pe
+2. `ESP32-CAM-Setup` WiFi se connect karo
+3. Apna WiFi password daalo
+4. Serial monitor mein IP dekho
+5. Browser mein `http://[IP]/` kholo
 
-## Kaise Flash Kare
-1. Arduino IDE mein Board → `AI Thinker ESP32-CAM` select karo
-2. Port → `COM4` select karo
-3. `WIFI_SSID` aur `WIFI_PASSWORD` apna bharo
-4. IO0 button dabao + RST press karo → Upload karo
-5. RST ek baar dabao → Serial Monitor mein IP dekho
-
-## Kaise Use Kare
-1. Serial Monitor kholo (115200 baud)
-2. IP address dekho jaise `192.168.29.243`
-3. Browser mein daalo: `http://192.168.29.243/`
-4. **Capture** button dabao → photo aa jaayegi
-5. **Download** button se photo save karo
-
-## WiFi Setup
-```cpp
-const char* WIFI_SSID     = "Tumhara_WiFi_Naam";
-const char* WIFI_PASSWORD = "Tumhara_Password";
-```
-
-## Libraries Used
-- `esp_camera.h` — camera control
-- `img_converters.h` — RGB565 to JPEG convert
-- `WiFi.h` — WiFi connection
-- `WebServer.h` — HTTP server
+## Libraries Needed
+- ESP32 Camera
+- WiFiManager
+- WebServer
+- mbedtls/base64
