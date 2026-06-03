@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ESP32-CAM Viewer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { background: #111; color: #0f0; font-family: monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+    h2 { color: #0f0; margin-bottom: 4px; }
+    .btn { display: inline-block; margin: 6px; padding: 11px 26px; border: 2px solid #0f0; border-radius: 6px; color: #0f0; background: #000; font-family: monospace; font-size: 0.95em; cursor: pointer; transition: all 0.2s; }
+    .btn:hover { background: #0f0; color: #000; }
+    .btn.blue { border-color: #0ff; color: #0ff; }
+    .btn.blue:hover { background: #0ff; color: #000; }
+    .btn.yellow { border-color: #ff0; color: #ff0; }
+    .btn.yellow:hover { background: #ff0; color: #000; }
+    #status { color: #aaa; font-size: 0.82em; margin: 8px 0; }
+    #json-box { margin-top: 16px; border: 1px solid #0ff; border-radius: 6px; padding: 14px; width: 90vw; max-width: 500px; display: none; word-break: break-all; font-size: 0.75em; color: #0ff; text-align: left; }
+    #converted-img { display: none; max-width: 90vw; border: 2px solid #0f0; border-radius: 6px; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <h2>ESP32-CAM Viewer</h2>
+
+  <!-- यहाँ :9950 जोड़ दिया गया है -->
+  <input id="esp-ip" type="text"
+    value="http://esp32cam.local:9950"
+    style="background:#000;color:#0f0;border:1px solid #0f0;
+    padding:8px;border-radius:4px;font-family:monospace;
+    width:260px;margin-bottom:12px;">
+
+  <div>
+    <button class="btn" onclick="fetchJson()">Fetch JSON</button>
+    <button class="btn blue" onclick="showJson()">Show JSON</button>
+    <button class="btn yellow" onclick="convertToImage()">Convert to Image</button>
+  </div>
+
+  <div id="status">Ready</div>
+  <div id="json-box"></div>
+  <img id="converted-img" alt="converted image"/>
+
+  <script>
+    var lastData = null;
+
+    function fetchJson() {
+      var ip = document.getElementById('esp-ip').value;
+      // सुनिश्चित करें कि URL के अंत में स्लैश सही है
+      if(ip.endsWith('/')) ip = ip.slice(0, -1); 
+      
+      document.getElementById('status').innerText = 'Fetching from ' + ip + '...';
+      document.getElementById('json-box').style.display = 'none';
+      document.getElementById('converted-img').style.display = 'none';
+
+      fetch(ip + '/get_image_json/')
+        .then(r => r.json())
+        .then(d => {
+          lastData = d;
+          document.getElementById('status').innerText = 'Done! ' + d.data.captured_at;
+        })
+        .catch(e => {
+          console.error(e);
+          document.getElementById('status').innerText = 'Fetch fail! Check IP:Port and Console.';
+        });
+    }
+
+    function showJson() {
+      if (!lastData) { document.getElementById('status').innerText = 'Pehle Fetch JSON karo!'; return; }
+      var box = document.getElementById('json-box');
+      box.style.display = 'block';
+      box.innerText = JSON.stringify(lastData, null, 2);
+    }
+
+    function convertToImage() {
+      if (!lastData) { document.getElementById('status').innerText = 'Pehle Fetch JSON karo!'; return; }
+      var img = document.getElementById('converted-img');
+      img.src = 'data:image/jpeg;base64,' + lastData.data.image_base64;
+      img.style.display = 'block';
+      document.getElementById('status').innerText = 'Image ready!';
+    }
+  </script>
+</body>
+</html>
